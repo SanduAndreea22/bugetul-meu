@@ -1,0 +1,143 @@
+{% extends "finance/base.html" %}
+
+{% block title %}Creează cont | Bugetul Meu{% endblock %}
+
+{% block extra_style %}
+<style>
+/* ===== REGISTER PREMIUM ===== */
+
+body {
+    background:
+        radial-gradient(1200px 600px at 20% -10%, #1e3a8a, transparent),
+        radial-gradient(1000px 500px at 90% 10%, #2563eb, transparent),
+        #020617;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #f8fafc;
+}
+
+/* CONTAINER */
+.auth-wrap {
+    max-width: 440px;
+    margin: 120px auto;
+}
+
+/* CARD */
+.auth-card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    padding: 48px;
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 40px 120px rgba(0,0,0,0.35);
+}
+
+/* TITLE */
+.auth-card h2 {
+    font-size: 34px;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.auth-card p {
+    color: #cbd5f5;
+    margin-bottom: 32px;
+}
+
+/* FORM */
+.auth-card label {
+    display: block;
+    margin: 18px 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.auth-card input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    font-size: 15px;
+    outline: none;
+}
+
+.auth-card input::placeholder {
+    color: #cbd5f5;
+}
+
+.auth-card input:focus {
+    border-color: #60a5fa;
+    background: rgba(255,255,255,0.18);
+}
+
+/* BUTTON */
+.auth-card button {
+    margin-top: 36px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 18px;
+    border: none;
+    font-weight: 900;
+    font-size: 15px;
+    cursor: pointer;
+    color: white;
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+    box-shadow: 0 20px 60px rgba(37,99,235,0.6);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-card button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 30px 80px rgba(37,99,235,0.8);
+}
+
+/* FOOTER */
+.auth-footer {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 14px;
+    color: #cbd5f5;
+}
+
+.auth-footer a {
+    font-weight: 800;
+    color: white;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="auth-card">
+
+        <h2>Creează cont</h2>
+        <p>Începe să-ți controlezi bugetul inteligent.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div style="color:#fca5a5; font-size:13px; margin-top:4px;">
+                        {{ field.errors|striptags }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <button type="submit">
+                Creează cont
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Ai deja cont?
+            <a href="{% url 'finance:login' %}">Autentifică-te</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

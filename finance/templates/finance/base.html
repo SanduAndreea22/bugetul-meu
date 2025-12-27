@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Bugetul Meu{% endblock %}</title>
+
+    <!-- PAGE STYLES -->
+    {% block extra_style %}{% endblock %}
+
+    <style>
+        :root {
+            --bg-dark: #020617;
+            --glass: rgba(255,255,255,0.08);
+            --border: rgba(255,255,255,0.15);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(1200px 600px at 20% -10%, #1e3a8a, transparent),
+                radial-gradient(1000px 500px at 90% 10%, #312e81, transparent),
+                var(--bg-dark);
+            color: var(--text);
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        /* NAVBAR */
+        .navbar {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            background: rgba(2,6,23,0.7);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 14px;
+        }
+
+        .nav-links a {
+            padding: 10px 22px;
+            border-radius: 14px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            font-weight: 700;
+            transition: all 0.25s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
+        }
+
+        .nav-links .primary {
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            border: none;
+            box-shadow: 0 20px 40px rgba(56,189,248,0.45);
+        }
+
+        /* LAYOUT */
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 72px);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            padding: 32px 20px;
+            background: rgba(2,6,23,0.6);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            color: #e5e7eb;
+            transition: all 0.25s ease;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(4px);
+        }
+
+        /* CONTENT */
+        .content {
+            flex: 1;
+            padding: 80px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <a href="{% url 'finance:home' %}" class="logo">Bugetul Meu</a>
+
+    <div class="nav-links">
+        {% if user.is_authenticated %}
+            <a href="{% url 'finance:logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'finance:login' %}">Login</a>
+            <a href="{% url 'finance:register' %}" class="primary">Înregistrare</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+    {% if user.is_authenticated %}
+    <aside class="sidebar">
+        <a href="{% url 'finance:dashboard' %}">🏠 Dashboard</a>
+        <a href="{% url 'finance:venituri' %}">💰 Venituri</a>
+        <a href="{% url 'finance:cheltuieli' %}">📤 Cheltuieli</a>
+        <a href="{% url 'finance:diagrame' %}">📊 Diagrame</a>
+    </aside>
+    {% endif %}
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+</div>
+
+<!-- MICRO JS (premium feel) -->
+<script>
+    // subtle navbar shadow on scroll
+    window.addEventListener("scroll", () => {
+        document.querySelector(".navbar").style.boxShadow =
+            window.scrollY > 10
+                ? "0 20px 40px rgba(15,23,42,0.4)"
+                : "none";
+    });
+</script>
+
+</body>
+</html>
+
