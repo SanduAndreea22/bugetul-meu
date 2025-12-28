@@ -1,0 +1,172 @@
+{% extends "finance/base.html" %}
+{% block title %}Istoric Tranzacții{% endblock %}
+
+{% block extra_style %}
+<style>
+
+/* WRAPPER */
+.history-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* HEADER */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.history-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+}
+
+/* FILTERS */
+.filters {
+    display: flex;
+    gap: 12px;
+}
+
+.filters a {
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: rgba(15,23,42,.7);
+    border: 1px solid rgba(255,255,255,.08);
+    font-weight: 600;
+    transition: .2s;
+}
+
+.filters a.active,
+.filters a:hover {
+    background: linear-gradient(135deg,#3b82f6,#6366f1);
+}
+
+/* TRANSACTION CARD */
+.transaction {
+    background: rgba(15,23,42,.85);
+    border-radius: 18px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,.4);
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+/* LEFT */
+.tx-info {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.tx-icon {
+    font-size: 24px;
+}
+
+/* TEXT */
+.tx-title {
+    font-weight: 700;
+}
+
+.tx-date {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+/* AMOUNT */
+.tx-amount {
+    font-weight: 800;
+}
+
+.income {
+    color: #4ade80;
+}
+
+.expense {
+    color: #f87171;
+}
+
+/* ACTIONS */
+.tx-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.tx-actions a {
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.08);
+}
+
+.tx-actions a:hover {
+    background: rgba(255,255,255,.18);
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="history-wrap">
+
+    <!-- HEADER -->
+    <div class="history-header">
+        <h1>📜 Istoric Tranzacții</h1>
+
+        <div class="filters">
+            <a href="?type=all" class="{% if filter_type == 'all' %}active{% endif %}">Toate</a>
+            <a href="?type=income" class="{% if filter_type == 'income' %}active{% endif %}">Venituri</a>
+            <a href="?type=expense" class="{% if filter_type == 'expense' %}active{% endif %}">Cheltuieli</a>
+        </div>
+    </div>
+
+    <!-- LIST -->
+    {% for t in transactions %}
+    <div class="transaction">
+
+        <div class="tx-info">
+            <div class="tx-icon">
+                {% if t.type == "income" %}💰{% else %}📤{% endif %}
+            </div>
+
+            <div>
+                <div class="tx-title">{{ t.obj.category }}</div>
+                <div class="tx-date">{{ t.obj.date }}</div>
+            </div>
+        </div>
+
+        <div class="tx-info">
+            <div class="tx-amount {% if t.type == 'income' %}income{% else %}expense{% endif %}">
+                {% if t.type == "income" %}+{% else %}-{% endif %}
+                {{ t.obj.amount }} RON
+            </div>
+
+            <div class="tx-actions">
+                {% if t.type == "income" %}
+                    <a href="{% url 'finance:edit_income' t.obj.id %}">Editează</a>
+                    <a href="{% url 'finance:delete_income' t.obj.id %}"
+                       onclick="return confirm('Ștergi acest venit?')">
+                       Șterge
+                    </a>
+                {% else %}
+                    <a href="{% url 'finance:edit_expense' t.obj.id %}">Editează</a>
+                    <a href="{% url 'finance:delete_expense' t.obj.id %}"
+                       onclick="return confirm('Ștergi această cheltuială?')">
+                       Șterge
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+    {% empty %}
+        <p style="text-align:center;color:#9ca3af;">Nu există tranzacții.</p>
+    {% endfor %}
+
+</div>
+{% endblock %}
+

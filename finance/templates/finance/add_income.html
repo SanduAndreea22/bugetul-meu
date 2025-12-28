@@ -1,0 +1,123 @@
+{% extends "finance/base.html" %}
+
+{% block title %}Adaugă Venit | Bugetul Meu{% endblock %}
+
+{% block extra_style %}
+<style>
+/* ===== ADD INCOME ===== */
+
+.form-wrap {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: linear-gradient(
+        135deg,
+        rgba(59,130,246,0.18),
+        rgba(99,102,241,0.18)
+    );
+    backdrop-filter: blur(18px);
+    border-radius: 28px;
+    padding: 48px;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.form-card h1 {
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.form-card p {
+    color: #c7d2fe;
+    margin-bottom: 32px;
+}
+
+/* INPUTS */
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #e5e7eb;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(15,23,42,0.8);
+    color: white;
+    font-size: 15px;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #60a5fa;
+}
+
+/* BUTTON */
+.btn-submit {
+    margin-top: 24px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    border: none;
+    font-weight: 800;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    box-shadow: 0 20px 60px rgba(34,197,94,0.45);
+    transition: all .25s ease;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 30px 80px rgba(34,197,94,0.6);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrap">
+
+    <div class="form-card">
+        <h1>💰 Adaugă Venit</h1>
+        <p>Completează detaliile venitului tău.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Suma (RON)</label>
+                {{ form.amount }}
+            </div>
+
+            <div class="form-group">
+                <label>Categorie</label>
+                {{ form.category }}
+            </div>
+
+            <div class="form-group">
+                <label>Data</label>
+                {{ form.date }}
+            </div>
+
+            <button type="submit" class="btn-submit">
+                Salvează Venit
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

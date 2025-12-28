@@ -12,7 +12,21 @@ urlpatterns = [
 
     # private
     path("dashboard/", views.dashboard, name="dashboard"),
-    path("venituri/", views.venituri, name="venituri"),
-    path("cheltuieli/", views.cheltuieli, name="cheltuieli"),
-    path("diagrame/", views.diagrame, name="diagrame"),
+    path("add-income/", views.add_income, name="add_income"),
+    path("add-expense/", views.add_expense, name="add_expense"),
+    path("add-recurring/", views.add_recurring, name="add_recurring"),
+
+    path("istoric/", views.transaction_history, name="history"),
+
+    path("income/<int:pk>/edit/", views.edit_income, name="edit_income"),
+    path("expense/<int:pk>/edit/", views.edit_expense, name="edit_expense"),
+    path("income/<int:pk>/delete/", views.delete_income, name="delete_income"),
+    path("expense/<int:pk>/delete/", views.delete_expense, name="delete_expense"),
+
+    # recurente
+    path("recurente/", views.recurring_list, name="recurring_list"),
+    path("recurente/edit/<int:pk>/", views.edit_recurring, name="edit_recurring"),
+    path("recurente/delete/<int:pk>/", views.delete_recurring, name="delete_recurring"),
 ]
+
+

@@ -1,0 +1,101 @@
+{% extends "finance/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_style %}
+<style>
+
+/* WRAPPER */
+.form-wrap {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+/* CARD */
+.form-card {
+    background: linear-gradient(
+        135deg,
+        rgba(59,130,246,0.18),
+        rgba(99,102,241,0.18)
+    );
+    backdrop-filter: blur(18px);
+    border-radius: 28px;
+    padding: 48px;
+    box-shadow: 0 40px 120px rgba(0,0,0,.45);
+    border: 1px solid rgba(255,255,255,.08);
+}
+
+/* TITLE */
+.form-card h2 {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 32px;
+}
+
+/* INPUTS */
+.form-card input,
+.form-card select {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: rgba(15,23,42,.85);
+    color: white;
+    font-size: 15px;
+}
+
+.form-card label {
+    font-size: 14px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: #c7d2fe;
+}
+
+/* BUTTON */
+.submit-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    border: none;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    background: linear-gradient(135deg,#3b82f6,#6366f1);
+    color: white;
+    box-shadow: 0 20px 50px rgba(59,130,246,.45);
+    transition: .25s;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 30px 70px rgba(59,130,246,.6);
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrap">
+
+    <div class="form-card">
+        <h2>{{ title }}</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+            {% endfor %}
+
+            <button type="submit" class="submit-btn">
+                Salvează
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

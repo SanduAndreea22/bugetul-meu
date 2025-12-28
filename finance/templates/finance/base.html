@@ -139,9 +139,9 @@
     {% if user.is_authenticated %}
     <aside class="sidebar">
         <a href="{% url 'finance:dashboard' %}">🏠 Dashboard</a>
-        <a href="{% url 'finance:venituri' %}">💰 Venituri</a>
-        <a href="{% url 'finance:cheltuieli' %}">📤 Cheltuieli</a>
-        <a href="{% url 'finance:diagrame' %}">📊 Diagrame</a>
+        <a href="{% url 'finance:add_income' %}">💰 Venituri</a>
+        <a href="{% url 'finance:add_expense' %}">📤 Cheltuieli</a>
+        <a href="{% url 'finance:history' %}">📜 Istoric</a>
     </aside>
     {% endif %}
 

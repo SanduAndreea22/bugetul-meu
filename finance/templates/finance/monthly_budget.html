@@ -1,0 +1,128 @@
+{% extends "finance/base.html" %}
+{% block title %}Buget Lunar | Bugetul Meu{% endblock %}
+
+{% block extra_style %}
+<style>
+.budget-wrap {
+    max-width: 900px;
+    margin: auto;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.tab {
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.tab.active {
+    background: linear-gradient(135deg,#3b82f6,#6366f1);
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.card {
+    background: rgba(15,23,42,0.75);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card small {
+    color: #94a3b8;
+}
+
+.actions a {
+    margin-left: 10px;
+    font-weight: 700;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="budget-wrap">
+
+    <h1>📅 Buget Lunar</h1>
+
+    <!-- TABURI -->
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('all')">Toate</div>
+        <div class="tab" onclick="showTab('income')">Venituri</div>
+        <div class="tab" onclick="showTab('expense')">Cheltuieli</div>
+        <div class="tab" onclick="showTab('recurring')">Recurente</div>
+    </div>
+
+    <!-- TOATE -->
+    <div id="all" class="section active">
+        <p>Rezumat general al bugetului lunar.</p>
+    </div>
+
+    <!-- VENITURI -->
+    <div id="income" class="section">
+        <p>Veniturile tale lunare.</p>
+    </div>
+
+    <!-- CHELTUIELI -->
+    <div id="expense" class="section">
+        <p>Cheltuielile tale lunare.</p>
+    </div>
+
+    <!-- 🔁 RECORENTE -->
+    <div id="recurring" class="section">
+
+        {% for r in recurrings %}
+        <div class="card">
+            <div>
+                <strong>
+                    {% if r.type == "income" %}💰{% else %}📤{% endif %}
+                    {{ r.category }}
+                </strong>
+                <br>
+                <small>
+                    {{ r.amount }} RON • Ziua {{ r.day_of_month }}
+                </small>
+            </div>
+
+            <div class="actions">
+                <a href="{% url 'finance:edit_recurring' r.id %}">✏️</a>
+                <a href="{% url 'finance:delete_recurring' r.id %}">🗑</a>
+            </div>
+        </div>
+        {% empty %}
+            <p>Nu ai tranzacții recurente.</p>
+        {% endfor %}
+
+        <a href="{% url 'finance:add_recurring' %}" class="btn-primary" style="margin-top:20px; display:inline-block;">
+            ➕ Adaugă Recurent
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "finance/base.html" %}
+
+{% block title %}Dashboard | Bugetul Meu{% endblock %}
+
+{% block extra_style %}
+<style>
+/* ===== DASHBOARD PREMIUM ===== */
+
+.dashboard-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* CARD PRINCIPAL */
+.balance-card {
+    background: linear-gradient(
+        135deg,
+        rgba(59,130,246,0.18),
+        rgba(99,102,241,0.18)
+    );
+    backdrop-filter: blur(16px);
+    border-radius: 28px;
+    padding: 48px;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.balance-card h1 {
+    font-size: 36px;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.balance-card p {
+    color: #c7d2fe;
+    font-size: 18px;
+}
+
+/* SOLD */
+.balance {
+    margin-top: 32px;
+    font-size: 54px;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.balance span {
+    font-size: 20px;
+    color: #c7d2fe;
+    margin-left: 8px;
+}
+
+/* QUICK ACTIONS */
+.actions {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.action {
+    background: rgba(15,23,42,0.75);
+    border-radius: 20px;
+    padding: 28px;
+    text-align: center;
+    font-weight: 700;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all .25s ease;
+}
+
+.action:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+}
+
+.action span {
+    display: block;
+    font-size: 32px;
+    margin-bottom: 14px;
+}
+
+/* ACCENT COLORS */
+.income { color: #4ade80; }
+.expense { color: #f87171; }
+.budget { color: #60a5fa; }
+.stats { color: #a78bfa; }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrap">
+
+    <div class="balance-card">
+        <h1>Bine ai revenit 👋</h1>
+        <p>Acesta este rezumatul bugetului tău curent.</p>
+
+        <!-- SOLD TOTAL -->
+        <div class="balance">
+            {{ balance|default:"0.00" }} <span>RON</span>
+        </div>
+
+        <!-- BUTOANE RAPIDE -->
+        <div class="actions">
+
+            <a href="{% url 'finance:add_income' %}" class="action income">
+                <span>💰</span>
+                Adaugă Venit
+            </a>
+
+            <a href="{% url 'finance:add_expense' %}" class="action expense">
+                <span>📤</span>
+                Adaugă Cheltuială
+            </a>
+
+            <a href="{% url 'finance:monthly_budget' %}" class="action budget">
+                <span>📅</span>
+                Buget Lunar
+            </a>
+
+            <a href="{% url 'finance:stats' %}" class="action stats">
+                <span>📊</span>
+                Statistici
+            </a>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
