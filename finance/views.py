@@ -85,10 +85,12 @@ def dashboard(request):
 # ======================
 # ADD TRANSACTIONS
 # ======================
-
 @login_required
 def add_income(request):
-    form = IncomeForm(request.POST or None)
+    form = IncomeForm(
+        request.POST or None,
+        user=request.user
+    )
 
     if form.is_valid():
         income = form.save(commit=False)
@@ -99,10 +101,12 @@ def add_income(request):
 
     return render(request, "finance/add_income.html", {"form": form})
 
-
 @login_required
 def add_expense(request):
-    form = ExpenseForm(request.POST or None)
+    form = ExpenseForm(
+        request.POST or None,
+        user=request.user
+    )
 
     if form.is_valid():
         expense = form.save(commit=False)
@@ -113,10 +117,12 @@ def add_expense(request):
 
     return render(request, "finance/add_expense.html", {"form": form})
 
-
 @login_required
 def add_recurring(request):
-    form = RecurringTransactionForm(request.POST or None)
+    form = RecurringTransactionForm(
+        request.POST or None,
+        user=request.user
+    )
 
     if form.is_valid():
         recurring = form.save(commit=False)
@@ -129,11 +135,9 @@ def add_recurring(request):
         "title": "Adaugă recurent"
     })
 
-
 # ======================
 # HISTORY
 # ======================
-
 @login_required
 def transaction_history(request):
     filter_type = request.GET.get("type", "all")
@@ -143,29 +147,52 @@ def transaction_history(request):
 
     transactions = []
 
+    # INCOME
     if filter_type in ["all", "income"]:
         for i in incomes:
+            if filter_type == "income" or filter_type == "all":
+                transactions.append({
+                    "type": "income",
+                    "obj": i,
+                    "date": i.date,
+                    "source": i.source,
+                })
+
+    # EXPENSE
+    if filter_type in ["all", "expense"]:
+        for e in expenses:
+            if filter_type == "expense" or filter_type == "all":
+                transactions.append({
+                    "type": "expense",
+                    "obj": e,
+                    "date": e.date,
+                    "source": e.source,
+                })
+
+    # RECURRING (din ambele)
+    if filter_type == "recurring":
+        for i in incomes.filter(source="recurring"):
             transactions.append({
                 "type": "income",
                 "obj": i,
-                "date": i.date
+                "date": i.date,
+                "source": i.source,
             })
 
-    if filter_type in ["all", "expense"]:
-        for e in expenses:
+        for e in expenses.filter(source="recurring"):
             transactions.append({
                 "type": "expense",
                 "obj": e,
-                "date": e.date
+                "date": e.date,
+                "source": e.source,
             })
 
     transactions.sort(key=lambda x: x["date"], reverse=True)
 
     return render(request, "finance/history.html", {
         "transactions": transactions,
-        "filter_type": filter_type
+        "filter_type": filter_type,
     })
-
 
 # ======================
 # EDIT / DELETE TRANSACTIONS
@@ -221,12 +248,13 @@ def delete_expense(request, pk):
 
 @login_required
 def recurring_list(request):
-    recurrings = RecurringTransaction.objects.filter(user=request.user)
+    recurrings = RecurringTransaction.objects.filter(
+        user=request.user
+    ).order_by("day_of_month")
 
-    return render(request, "finance/recurring_form.html", {
+    return render(request, "finance/recurring_list.html", {
         "recurrings": recurrings
     })
-
 
 @login_required
 def edit_recurring(request, pk):
@@ -249,6 +277,7 @@ def edit_recurring(request, pk):
         "form": form,
         "title": "Editează recurent"
     })
+
 
 
 @login_required

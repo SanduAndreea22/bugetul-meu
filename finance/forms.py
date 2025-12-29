@@ -1,4 +1,4 @@
-from .models import Income, Expense, RecurringTransaction
+from .models import Income, Expense, RecurringTransaction, Category
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
@@ -40,16 +40,52 @@ class LoginForm(AuthenticationForm):
 
 
 from django.utils.timezone import now
-
 class IncomeForm(forms.ModelForm):
     class Meta:
         model = Income
         fields = ["amount", "category", "date"]
         widgets = {
             "amount": forms.NumberInput(attrs={"placeholder": "Sumă (RON)"}),
-            "category": forms.TextInput(attrs={"placeholder": "Categorie"}),
             "date": forms.DateInput(attrs={"type": "date"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields["category"].queryset = Category.objects.filter(
+                user=user,
+                type="income"
+            )
+
+from django import forms
+from django.utils.timezone import now
+from .models import Expense
+
+from django import forms
+from django.utils.timezone import now
+from .models import Expense, Category
+
+
+class ExpenseForm(forms.ModelForm):
+    class Meta:
+        model = Expense
+        fields = ["amount", "category", "date"]
+        widgets = {
+            "amount": forms.NumberInput(attrs={"placeholder": "Sumă (RON)"}),
+            "date": forms.DateInput(attrs={"type": "date"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields["category"].queryset = Category.objects.filter(
+                user=user,
+                type="expense"
+            )
 
     def clean_amount(self):
         amount = self.cleaned_data["amount"]
@@ -61,50 +97,42 @@ class IncomeForm(forms.ModelForm):
         return self.cleaned_data.get("date") or now().date()
 
 from django import forms
-from django.utils.timezone import now
-from .models import Expense
-
-
-class ExpenseForm(forms.ModelForm):
-    class Meta:
-        model = Expense
-        fields = ["amount", "category", "date"]
-        widgets = {
-            "amount": forms.NumberInput(attrs={
-                "placeholder": "Sumă (RON)"
-            }),
-            "category": forms.TextInput(attrs={
-                "placeholder": "Categorie (ex: Alimentație)"
-            }),
-            "date": forms.DateInput(attrs={
-                "type": "date"
-            }),
-        }
-
-    def clean_amount(self):
-        amount = self.cleaned_data["amount"]
-        if amount <= 0:
-            raise forms.ValidationError("Suma trebuie să fie pozitivă.")
-        return amount
-
-    def clean_date(self):
-        return self.cleaned_data.get("date") or now().date()
+from .models import RecurringTransaction, Category
 
 
 class RecurringTransactionForm(forms.ModelForm):
     class Meta:
         model = RecurringTransaction
-        fields = ["type", "amount", "category", "day_of_month"]
+        fields = ["type", "category", "amount", "day_of_month"]
         widgets = {
             "type": forms.Select(),
             "amount": forms.NumberInput(attrs={"placeholder": "Sumă (RON)"}),
-            "category": forms.TextInput(attrs={"placeholder": "Categorie"}),
             "day_of_month": forms.NumberInput(attrs={
                 "min": 1,
-                "max": 28,
-                "placeholder": "Ziua din lună (1–28)"
+                "max": 28
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields["category"].queryset = Category.objects.filter(
+                user=user
+            )
+
+            # dacă editezi sau ai POST
+            tx_type = (
+                self.data.get("type")
+                or self.initial.get("type")
+            )
+
+            if tx_type in ["income", "expense"]:
+                self.fields["category"].queryset = Category.objects.filter(
+                    user=user,
+                    type=tx_type
+                )
 
     def clean_amount(self):
         amount = self.cleaned_data["amount"]

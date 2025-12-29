@@ -2,6 +2,18 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Category(models.Model):
+    TYPE_CHOICES = (
+        ("income", "Venit"),
+        ("expense", "Cheltuială"),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+
+    def __str__(self):
+        return self.name
 
 class Income(models.Model):
     SOURCE_CHOICES = [
@@ -11,7 +23,10 @@ class Income(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    category = models.CharField(max_length=100)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT
+    )
     date = models.DateField()
 
     source = models.CharField(
@@ -42,7 +57,10 @@ class Expense(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    category = models.CharField(max_length=100)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT
+    )
     date = models.DateField()
 
     source = models.CharField(
@@ -74,7 +92,10 @@ class RecurringTransaction(models.Model):
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    category = models.CharField(max_length=100)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT
+    )
 
     day_of_month = models.PositiveSmallIntegerField(
         help_text="Ziua din lună (1–28)"
@@ -96,13 +117,13 @@ class RecurringTransaction(models.Model):
 
 class MonthlyBudget(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        limit_choices_to={"type": "expense"}
+    )
     month = models.DateField(help_text="Prima zi a lunii")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-
     class Meta:
-        unique_together = ("user", "month")
-
-    def __str__(self):
-        return f"{self.month} – {self.amount} RON"
+        unique_together = ("user", "category", "month")

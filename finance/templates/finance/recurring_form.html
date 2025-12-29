@@ -1,128 +1,127 @@
 {% extends "finance/base.html" %}
-{% block title %}Recurente | Bugetul Meu{% endblock %}
+{% block title %}{{ title }} | Bugetul Meu{% endblock %}
 
 {% block extra_style %}
 <style>
-.recurring-wrap {
-    max-width: 1000px;
+
+.form-group select {
+    color: white;
+    background-color: rgba(255,255,255,0.08);
+}
+
+.form-group select option {
+    color: #0f172a;          /* text închis */
+    background-color: white; /* fundal alb */
+}
+
+.form-wrap {
+    max-width: 520px;
     margin: 0 auto;
 }
 
-.recurring-card {
+.form-card {
     background: rgba(15,23,42,0.75);
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(18px);
     border-radius: 24px;
     padding: 36px;
     box-shadow: 0 30px 80px rgba(0,0,0,0.45);
     border: 1px solid rgba(255,255,255,0.06);
 }
 
-.recurring-card h1 {
-    font-size: 32px;
+.form-card h1 {
+    font-size: 30px;
     font-weight: 900;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.recurring-table {
+/* FORM */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #cbd5f5;
+}
+
+.form-group input,
+.form-group select {
     width: 100%;
-    border-collapse: collapse;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    font-size: 15px;
 }
 
-.recurring-table th {
-    text-align: left;
-    font-size: 14px;
-    color: #94a3b8;
-    padding-bottom: 12px;
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: rgba(255,255,255,0.12);
 }
 
-.recurring-table td {
-    padding: 14px 0;
-    border-top: 1px solid rgba(255,255,255,0.08);
-}
-
-.badge {
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.income {
-    background: rgba(34,197,94,0.15);
-    color: #4ade80;
-}
-
-.expense {
-    background: rgba(239,68,68,0.15);
-    color: #f87171;
-}
-
-.actions a {
-    margin-right: 10px;
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.edit { color: #60a5fa; }
-.delete { color: #f87171; }
-
-.add-btn {
-    display: inline-block;
-    margin-top: 28px;
-    background: linear-gradient(135deg, #2563eb, #6366f1);
-    padding: 14px 28px;
+/* BUTTON */
+.submit-btn {
+    width: 100%;
+    margin-top: 24px;
+    background: linear-gradient(135deg,#2563eb,#6366f1);
+    padding: 14px;
     border-radius: 14px;
+    font-size: 16px;
     font-weight: 800;
     color: white;
+    border: none;
+    cursor: pointer;
     box-shadow: 0 20px 50px rgba(37,99,235,0.45);
+}
+
+.submit-btn:hover {
+    opacity: .95;
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="recurring-wrap">
+<div class="form-wrap">
+    <div class="form-card">
 
-    <div class="recurring-card">
-        <h1>🔁 Tranzacții recurente</h1>
+        <h1>🔁 {{ title }}</h1>
 
-        {% if recurrings %}
-        <table class="recurring-table">
-            <thead>
-                <tr>
-                    <th>Tip</th>
-                    <th>Categorie</th>
-                    <th>Suma</th>
-                    <th>Zi lunară</th>
-                    <th>Acțiuni</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for r in recurrings %}
-                <tr>
-                    <td>
-                        <span class="badge {{ r.type }}">
-                            {{ r.get_type_display }}
-                        </span>
-                    </td>
-                    <td>{{ r.category }}</td>
-                    <td>{{ r.amount }} RON</td>
-                    <td>Ziua {{ r.day_of_month }}</td>
-                    <td class="actions">
-                        <a href="{% url 'finance:edit_recurring' r.id %}" class="edit">Editează</a>
-                        <a href="{% url 'finance:delete_recurring' r.id %}" class="delete">Șterge</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-            <p style="color:#94a3b8;">Nu ai recurente definite.</p>
-        {% endif %}
+        <form method="post">
+            {% csrf_token %}
 
-        <a href="{% url 'finance:add_recurring' %}" class="add-btn">
-            + Adaugă recurent
-        </a>
+            <div class="form-group">
+                <label>Tip</label>
+                {{ form.type }}
+            </div>
+
+            <div class="form-group">
+                <label>Categorie</label>
+                {{ form.category }}
+            </div>
+
+            <div class="form-group">
+                <label>Sumă</label>
+                {{ form.amount }}
+            </div>
+
+            <div class="form-group">
+                <label>Ziua din lună</label>
+                {{ form.day_of_month }}
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Salvează
+            </button>
+        </form>
+
     </div>
-
 </div>
 {% endblock %}
